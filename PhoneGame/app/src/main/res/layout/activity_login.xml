@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/background">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@color/alpha_black" />
+    
+    <ImageView
+        android:id="@+id/img_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/ic_login"
+        android:layout_marginTop="120dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btn_startgame"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/img_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/login_press"
+        android:gravity="center"
+        android:text="开始游戏"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_endgame"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/btn_startgame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/finish_press"
+        android:gravity="center"
+        android:text="退出游戏"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+
+</RelativeLayout>
