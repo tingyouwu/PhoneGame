@@ -26,7 +26,7 @@ import java.util.UUID;
 public class BluetoothChatService {
     private static final String TAG = "BluetoothChatService";
     private static final boolean D = true;
-    private static final String NAME = "BluetoothChat";
+    private static final String NAME = "PhoneGame";
 
     private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 
@@ -35,12 +35,12 @@ public class BluetoothChatService {
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
-    private int mState;
+    private int mState; //当前状态
 
     public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    public static final int STATE_LISTEN = 1;     // now listening for incoming connections 监听请求进来的连接
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection 监听发送出去的连接
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device 已经连接的监听
 
     public BluetoothChatService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -48,11 +48,9 @@ public class BluetoothChatService {
         mHandler = handler;
     }
 
-
     private synchronized void setState(int state) {
         if (D) Log.d(TAG, "setState() " + mState + " -> " + state);
         mState = state;
-        // Give the new state to the Handler so the UI Activity can update
         mHandler.obtainMessage(LoginActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
@@ -67,14 +65,8 @@ public class BluetoothChatService {
      * session in listening (server) mode. Called by the Activity onResume() */
     public synchronized void start() {
         if (D) Log.d(TAG, "start");
-
-        // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
-
-        // Cancel any thread currently running a connection
         if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
-
-        // Start the thread to listen on a BluetoothServerSocket
         if (mAcceptThread == null) {
             mAcceptThread = new AcceptThread();
             mAcceptThread.start();
@@ -201,7 +193,6 @@ public class BluetoothChatService {
 
         public AcceptThread() {
             BluetoothServerSocket tmp = null;
-
             // Create a new listening server socket
             try {
                 tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
