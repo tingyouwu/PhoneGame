@@ -8,8 +8,12 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@color/alpha_black" />
-    
+        android:src="@color/alpha_black"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <ImageView
         android:id="@+id/img_icon"
         android:layout_width="100dp"
@@ -20,20 +24,20 @@
 
     <Button
         android:id="@+id/btn_startgame"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_below="@id/img_icon"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:background="@drawable/login_press"
         android:gravity="center"
         android:text="开始游戏"
         android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/img_icon" />
 
     <Button
         android:id="@+id/btn_endgame"
-        android:layout_width="100dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_below="@id/btn_startgame"
         android:layout_centerHorizontal="true"
@@ -44,19 +48,17 @@
         android:textColor="@color/white"
         android:textSize="16sp" />
 
-    <Button
+    <ImageView
         android:id="@+id/btn_connect"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/login_press"
-        android:gravity="center"
-        android:text="连接设备"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/white"
-        android:layout_marginBottom="50dp"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/settings"
+        android:textColor="@color/white"
         android:textSize="16sp" />
+
+
 
 </RelativeLayout>

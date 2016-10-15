@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wty.app.phonegame.R;
-
 import java.util.Set;
 
 public class DeviceListActivity extends Activity {
@@ -34,17 +33,17 @@ public class DeviceListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.device_list);
+		setTitle("当前蓝牙设备");
 		setResult(Activity.RESULT_CANCELED);
 		Button scanButton = (Button) findViewById(R.id.button_scan);
 		scanButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				doDiscovery();
 				v.setVisibility(View.GONE);
 			}
 		});
 
-		// Initialize array adapters. One for already paired devices and
-		// one for newly discovered devices
 		mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this,
 				R.layout.device_name);
 		mNewDevicesArrayAdapter = new ArrayAdapter<String>(this,
@@ -102,7 +101,6 @@ public class DeviceListActivity extends Activity {
 		if (mBtAdapter.isDiscovering()) {
 			mBtAdapter.cancelDiscovery();
 		}
-		// Request discover from BluetoothAdapter
 		mBtAdapter.startDiscovery();
 	}
 
@@ -114,7 +112,6 @@ public class DeviceListActivity extends Activity {
 			mBtAdapter.cancelDiscovery();
 			String info = ((TextView) v).getText().toString();
 			String address = info.substring(info.length() - 17);
-			// Create the result Intent and include the MAC address
 			Intent intent = new Intent();
 			intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 			setResult(Activity.RESULT_OK, intent);
