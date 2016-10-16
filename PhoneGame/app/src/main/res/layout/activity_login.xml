@@ -80,6 +80,7 @@
         android:layout_above="@id/btn_connect"
         android:layout_marginBottom="20dp"
         android:text="检测"
+        android:visibility="gone"
         android:textColor="@color/alpha_black"
         android:textSize="16sp"
         />
