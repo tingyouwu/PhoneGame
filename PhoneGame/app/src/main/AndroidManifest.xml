@@ -46,6 +46,13 @@
             </intent-filter>
         </service>
 
+        <service android:name=".service.MusicService1">
+            <intent-filter>
+                <action android:name="com.wty.Android.MUSIC1"/>
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

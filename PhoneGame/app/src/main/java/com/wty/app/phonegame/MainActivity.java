@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN , WindowManager.LayoutParams. FLAG_FULLSCREEN);
         ll_refuse = (LinearLayout) findViewById(R.id.ll_refuse);
         ll_accept = (LinearLayout) findViewById(R.id.ll_accept);
         ll_refuse.setOnClickListener(this);
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onFinish() {
-            MusicServiceManager.startService(MainActivity.this);
+            MusicServiceManager.startService1(MainActivity.this);
             contentLayout.setVisibility(View.VISIBLE);
             tv_start.setVisibility(View.GONE);
             countDowntimerForShow.start();
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        MusicServiceManager.stopService(this);
+        MusicServiceManager.stopService1(this);
     }
 
     @Override
