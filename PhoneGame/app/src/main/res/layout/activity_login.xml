@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:src="@mipmap/login_background"
         android:id="@+id/imageView"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:layout_alignParentTop="true"/>
 
     <ImageView
@@ -56,8 +56,18 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:src="@mipmap/settings"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:src="@mipmap/settings" />
+    
+    <TextView
+        android:id="@+id/tv_setting"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text=""
+        android:textColor="@color/alpha_black"
+        android:textSize="16sp"
+        />
 
 </RelativeLayout>

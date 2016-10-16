@@ -9,19 +9,31 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ListHolder;
+import com.orhanobut.dialogplus.OnItemClickListener;
+import com.wty.app.phonegame.adapter.DialogCenterListAdapter;
 import com.wty.app.phonegame.bluetooth.BluetoothChatService;
 import com.wty.app.phonegame.bluetooth.DeviceListActivity;
 import com.wty.app.phonegame.event.RefreshEvent;
-import com.wty.app.phonegame.service.MusicService;
 import com.wty.app.phonegame.service.MusicServiceManager;
+import com.wty.app.phonegame.utils.PreferenceUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.wty.app.phonegame.bluetooth.BluetoothChatService.DEVICE_NAME;
 import static com.wty.app.phonegame.bluetooth.BluetoothChatService.MESSAGE_DEVICE_NAME;
@@ -36,7 +48,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button btn_start;
     Button btn_end;
     ImageView btn_connect;
+    TextView tv_setting;
 
+    Map<Integer,String> msgMap = new LinkedHashMap<>();
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
 
@@ -52,10 +66,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btn_end = (Button) findViewById(R.id.btn_endgame);
         btn_start = (Button) findViewById(R.id.btn_startgame);
         btn_connect = (ImageView) findViewById(R.id.btn_connect);
+        tv_setting = (TextView) findViewById(R.id.tv_setting);
 
         btn_start.setOnClickListener(this);
         btn_end.setOnClickListener(this);
         btn_connect.setOnClickListener(this);
+        tv_setting.setOnClickListener(this);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -63,12 +79,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             finish();
             return;
         }else{
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
-        }
 
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(this, mHandler);
+            if(!mBluetoothAdapter.isEnabled()){
+                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
+            }else{
+               // Initialize the BluetoothChatService to perform bluetooth connections
+                mChatService = new BluetoothChatService(this, mHandler);
+            }
+        }
+        msgMap.put(1,"容易");
+        msgMap.put(2,"中级");
+        msgMap.put(3,"困难");
+        tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
 
     }
 
@@ -84,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onResume();
         MusicServiceManager.startService(this);
         EventBus.getDefault().register(this);
-        if (mChatService != null) {
+        if (mChatService != null && mBluetoothAdapter.isEnabled()) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
             if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
                 mChatService.start();
@@ -109,6 +132,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }else if(v.getId()==R.id.btn_connect){
             Intent serverIntent = new Intent(LoginActivity.this, DeviceListActivity.class);
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+        }else if(v.getId()==R.id.tv_setting){
+            showPhotoDialog();
         }
     }
 
@@ -118,6 +143,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(event.getMsg().equals("2")){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+        }else if(event.getMsg().equals("1")){
+            //切换难易程度
+            int level = PreferenceUtil.getInstance().getLevel();
+            if(level==1){
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,11000);
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,1000);
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,2);
+                tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
+            }else if(level==2){
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,10500);
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,500);
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,3);
+                tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
+            }else{
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,1);
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,12000);
+                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,2000);
+                tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
+            }
         }
     }
 
@@ -130,6 +174,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String address = data.getExtras()
                             .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                     BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+                    if(mChatService == null){
+                        mChatService = new BluetoothChatService(this, mHandler);
+                        mChatService.start();
+                    }
                     mChatService.connect(device);
                 }
                 break;
@@ -142,6 +190,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
         }
+    }
+
+    /**
+     * 弹出底部框
+     */
+    private void showPhotoDialog() {
+        List<String> data = new ArrayList<String>();
+        data.add("容易");
+        data.add("中级");
+        data.add("困难");
+
+        final DialogPlus dialog = DialogPlus.newDialog(LoginActivity.this)
+                .setContentHolder(new ListHolder())
+                .setCancelable(true)
+                .setGravity(Gravity.BOTTOM)
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setContentBackgroundResource(R.drawable.bg_dialog_list)
+                .setAdapter(new DialogCenterListAdapter(LoginActivity.this, data))
+                .setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                        switch (position){
+                            case 0://
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,1);
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,12000);
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,2000);
+                                tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
+                                dialog.dismiss();
+                                break;
+                            case 1://
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,11000);
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,1000);
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,2);
+                                tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
+                                dialog.dismiss();
+                                break;
+                            case 2:
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,10500);
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,500);
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,3);
+                                tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
+                                dialog.dismiss();
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
     // The Handler that gets information back from the BluetoothChatService

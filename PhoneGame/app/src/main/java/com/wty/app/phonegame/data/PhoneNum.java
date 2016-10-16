@@ -8,49 +8,46 @@ import java.util.Random;
 
 public class PhoneNum{
 
+    private static String[] telFirst="134,135,136,137,138,139,150,151,152,157,158,159,130,131,132,155,156,133,153".split(",");
+    private static String getTel() {
+        int index=getNum(0,telFirst.length-1);
+        String first=telFirst[index];
+        String second=String.valueOf(getNum(1,888)+10000).substring(1);
+        String thrid=String.valueOf(getNum(1,9100)+10000).substring(1);
+        return first+second+thrid;
+     }
+    public static int getNum(int start,int end) {
+        return (int)(Math.random()*(end-start+1)+start);
+    }
+
     private static PhoneNum instance = new PhoneNum();
     private Map<String,Boolean> phoneMap = new LinkedHashMap<>();
     private List<String> phonelist = new ArrayList<>();
+    private List<String> normalNotice = new ArrayList<>();
+    private List<String> badNotice = new ArrayList<>();
     private PhoneNum(){
-        phoneMap.put("1",true);
-        phoneMap.put("12",false);
-        phoneMap.put("123",true);
-        phoneMap.put("1234",false);
-        phoneMap.put("12345",true);
-        phoneMap.put("123456",false);
-        phoneMap.put("1234567",true);
-        phoneMap.put("12345678",false);
-        phoneMap.put("123456789",true);
-        phoneMap.put("1234567890",false);
-        phoneMap.put("0987654321",true);
-        phoneMap.put("987654321",false);
-        phoneMap.put("87654321",true);
-        phoneMap.put("7654321",false);
-        phoneMap.put("654321",true);
-        phoneMap.put("54321",false);
-        phoneMap.put("4321",true);
-        phoneMap.put("321",false);
-        phoneMap.put("21",true);
 
-        phonelist.add("1");
-        phonelist.add("12");
-        phonelist.add("123");
-        phonelist.add("1234");
-        phonelist.add("12345");
-        phonelist.add("123456");
-        phonelist.add("1234567");
-        phonelist.add("12345678");
-        phonelist.add("123456789");
-        phonelist.add("1234567890");
-        phonelist.add("0987654321");
-        phonelist.add("987654321");
-        phonelist.add("87654321");
-        phonelist.add("7654321");
-        phonelist.add("654321");
-        phonelist.add("54321");
-        phonelist.add("4321");
-        phonelist.add("321");
-        phonelist.add("21");
+        //100个白名单
+        for(int i = 0;i<100;i++){
+            String mobile = getTel();
+            phonelist.add(mobile);
+            phoneMap.put(mobile,true);
+        }
+
+        normalNotice.add("快递送餐");
+        normalNotice.add("出租车");
+        normalNotice.add("专车");
+
+        //100个白名单
+        for(int i = 0;i<100;i++){
+            String mobile = getTel();
+            phonelist.add(mobile);
+            phoneMap.put(mobile,false);
+        }
+
+        badNotice.add("诈骗电话");
+        badNotice.add("广告推销");
+        badNotice.add("骚扰电话");
     }
     public static PhoneNum getInstance(){
         return instance;
@@ -60,6 +57,19 @@ public class PhoneNum{
         Random random = new Random();
         int randomint = random.nextInt(phonelist.size());
         return phonelist.get(randomint);
+    }
+
+
+    public String getNormalNotice(){
+        Random random = new Random();
+        int randomint = random.nextInt(normalNotice.size());
+        return normalNotice.get(randomint);
+    }
+
+    public String getBadNotice(){
+        Random random = new Random();
+        int randomint = random.nextInt(badNotice.size());
+        return badNotice.get(randomint);
     }
 
     /**

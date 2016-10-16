@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.wty.app.phonegame.data.PhoneNum;
 import com.wty.app.phonegame.event.RefreshEvent;
 import com.wty.app.phonegame.service.MusicServiceManager;
+import com.wty.app.phonegame.utils.PreferenceUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,9 +22,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static int ONE_TIME = 1000;
-    public static int MAX_RECORD_TIME = 33*ONE_TIME;
-    public static int EACH_TIME = 3*ONE_TIME;
     TextView tv_mobile,tv_notice,tv_time;
     TextView tv_start;
     TextView tv_check;
@@ -53,17 +51,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isClickRefuse = false;
         isClickAccept = false;
         EventBus.getDefault().register(this);
+
         countDowntimerForStart.start();
     }
 
     /***
      * @Decription  倒计时
      */
-    CountDownTimer countDowntimerForShow = new CountDownTimer(MAX_RECORD_TIME,200) {
+    CountDownTimer countDowntimerForShow = new CountDownTimer(PreferenceUtil.getInstance().getMax(),200) {
         @Override
         public void onTick(long millisUntilFinished) {
-            if(millisUntilFinished-EACH_TIME<0)return;
-            int untilfinish = (int)((millisUntilFinished-EACH_TIME)/1000);
+            if(millisUntilFinished-PreferenceUtil.getInstance().getEach()<0)return;
+            int untilfinish = (int)((millisUntilFinished-PreferenceUtil.getInstance().getEach())/1000);
             tv_time.setText(""+untilfinish);
         }
 
@@ -113,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /***
      * @Decription  倒计时
      */
-    CountDownTimer countDowntimer = new CountDownTimer(MAX_RECORD_TIME,EACH_TIME) {
+    CountDownTimer countDowntimer = new CountDownTimer(PreferenceUtil.getInstance().getMax(),PreferenceUtil.getInstance().getEach()) {
         @Override
         public void onTick(long millisUntilFinished) {
             if(MobileSelection != 0){
@@ -127,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             currentmobile = PhoneNum.getInstance().getRandomMoblie();
             isNeedtoRefuse = PhoneNum.getInstance().isNeedtoRefuse(currentmobile);
             tv_mobile.setText(currentmobile);
-            tv_notice.setText(isNeedtoRefuse?"骚扰电话":"");
+            tv_notice.setText(isNeedtoRefuse?PhoneNum.getInstance().getBadNotice():PhoneNum.getInstance().getNormalNotice());
             tv_check.setText("");
         }
 
@@ -157,6 +156,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        MusicServiceManager.stopService(this);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
     }
@@ -164,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MusicServiceManager.stopService(this);
         EventBus.getDefault().unregister(this);
         if(countDowntimer != null)
             countDowntimer.cancel();
