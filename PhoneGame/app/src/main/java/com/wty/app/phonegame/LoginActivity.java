@@ -122,6 +122,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onDestroy() {
         super.onDestroy();
         if (mChatService != null) mChatService.stop();
+        if(mBluetoothAdapter.isEnabled()){
+            mBluetoothAdapter.disable();
+        }
         // TODO Auto-generated method stub
     }
 
