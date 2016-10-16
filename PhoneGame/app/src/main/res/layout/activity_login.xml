@@ -3,7 +3,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/background">
+    android:background="@color/white">
 
     <ImageView
         android:layout_width="match_parent"
@@ -11,6 +11,7 @@
         android:src="@mipmap/login_background"
         android:id="@+id/imageView"
         android:scaleType="fitCenter"
+        android:background="@color/white"
         android:layout_alignParentTop="true"/>
 
     <ImageView
