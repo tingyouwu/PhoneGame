@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 设备休眠 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +31,13 @@
             android:name=".bluetooth.DeviceListActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.MinWidth"
             android:configChanges="orientation|keyboardHidden" />
+
+        <service android:name=".service.MusicService">
+            <intent-filter>
+                <action android:name="com.wty.Android.MUSIC"/>
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+        </service>
 
     </application>
 

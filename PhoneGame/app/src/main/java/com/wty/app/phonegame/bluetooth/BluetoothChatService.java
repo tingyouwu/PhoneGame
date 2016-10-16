@@ -345,9 +345,12 @@ public class BluetoothChatService {
             int bytes;
             while (true) {
                 try {
+                    // 读取输入流
                     bytes = mmInStream.read(buffer);
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    Log.d(TAG, "wutingyou 收到数据");
+                    if(bytes>0)
+                        mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+                                .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();

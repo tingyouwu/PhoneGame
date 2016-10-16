@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.wty.app.phonegame.data.PhoneNum;
 import com.wty.app.phonegame.event.RefreshEvent;
+import com.wty.app.phonegame.service.MusicServiceManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static int EACH_TIME = 3*ONE_TIME;
     TextView tv_mobile,tv_notice,tv_time;
     TextView tv_start;
+    TextView tv_check;
     RelativeLayout contentLayout;
     LinearLayout ll_refuse,ll_accept;
     String currentmobile;
@@ -33,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean isClickAccept;
     List<Boolean> result = new ArrayList<>();
     int MobileSelection = 0;//记录当前是第几个电话号码
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +48,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_notice = (TextView) findViewById(R.id.tv_notice);
         tv_time = (TextView) findViewById(R.id.tv_time);
         tv_start = (TextView) findViewById(R.id.start_time);
+        tv_check = (TextView) findViewById(R.id.tv_check);
         contentLayout = (RelativeLayout) findViewById(R.id.rl_content);
         isClickRefuse = false;
         isClickAccept = false;
+        EventBus.getDefault().register(this);
         countDowntimerForStart.start();
     }
 
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     CountDownTimer countDowntimerForShow = new CountDownTimer(MAX_RECORD_TIME,200) {
         @Override
         public void onTick(long millisUntilFinished) {
+            if(millisUntilFinished-EACH_TIME<0)return;
             int untilfinish = (int)((millisUntilFinished-EACH_TIME)/1000);
             tv_time.setText(""+untilfinish);
         }
@@ -97,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onFinish() {
+            MusicServiceManager.startService(MainActivity.this);
             contentLayout.setVisibility(View.VISIBLE);
             tv_start.setVisibility(View.GONE);
             countDowntimerForShow.start();
@@ -123,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isNeedtoRefuse = PhoneNum.getInstance().isNeedtoRefuse(currentmobile);
             tv_mobile.setText(currentmobile);
             tv_notice.setText(isNeedtoRefuse?"骚扰电话":"");
+            tv_check.setText("");
         }
 
         @Override
@@ -133,21 +139,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
     @Subscribe
     public void onEventMainThread(RefreshEvent event){
         Log.d("Main wutingyou:",event.getMsg());
-        if(event.getMsg().equals("1")){
+        tv_check.setText(event.getMsg());
+        if(event.getMsg().equals("2")){
             //接收
             if(MobileSelection > result.size()){
                 result.add(!isNeedtoRefuse?true:false);
             }
-        }else if(event.getMsg().equals("2")){
+        }else if(event.getMsg().equals("1")){
             //拒绝
             if(MobileSelection > result.size()){
                 result.add(isNeedtoRefuse?true:false);
@@ -157,14 +158,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MusicServiceManager.stopService(this);
         EventBus.getDefault().unregister(this);
         if(countDowntimer != null)
             countDowntimer.cancel();
 
         if(countDowntimerForShow != null)
             countDowntimerForShow.cancel();
-
-        super.onStop();
     }
 
     @Override

@@ -19,6 +19,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,16 +36,17 @@
         android:id="@+id/tv_result_notice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:textColor="@color/white"
         android:layout_below="@id/tv_result"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="很遗憾，欢迎下次再来！"/>
+        android:text=""/>
 
     <Button
+        android:visibility="gone"
         android:id="@+id/btn_finish"
         android:layout_width="match_parent"
         android:layout_marginLeft="10dp"

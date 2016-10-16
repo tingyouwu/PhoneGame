@@ -16,8 +16,9 @@ import android.widget.Toast;
 
 import com.wty.app.phonegame.bluetooth.BluetoothChatService;
 import com.wty.app.phonegame.bluetooth.DeviceListActivity;
-import com.wty.app.phonegame.event.FinishEvent;
 import com.wty.app.phonegame.event.RefreshEvent;
+import com.wty.app.phonegame.service.MusicService;
+import com.wty.app.phonegame.service.MusicServiceManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,12 +75,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onPause() {
         super.onPause();
+        MusicServiceManager.stopService(this);
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        MusicServiceManager.startService(this);
         EventBus.getDefault().register(this);
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
@@ -93,6 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onDestroy() {
         super.onDestroy();
         if (mChatService != null) mChatService.stop();
+        // TODO Auto-generated method stub
     }
 
     @Override
@@ -111,15 +115,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Subscribe
     public void onEventMainThread(RefreshEvent event){
         Log.d("Login wutingyou:",event.getMsg());
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-
+        if(event.getMsg().equals("2")){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
-    @Subscribe
-    public void onEventMainThread(FinishEvent event){
-        finish();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -169,7 +170,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.d("收到蓝牙模块数据：wutingyou:",readMessage);
+                    Log.d("wutingyou","收到按键事件："+readMessage);
                     EventBus.getDefault().post(new RefreshEvent(readMessage));
                     break;
                 case MESSAGE_DEVICE_NAME:
