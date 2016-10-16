@@ -30,7 +30,7 @@ public class MusicService1 extends Service {
                 // TODO Auto-generated method stub
                 // 循环播放
                 try {
-                    mp.start();
+//                    mp.start();
                 } catch (IllegalStateException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
