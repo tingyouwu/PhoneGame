@@ -31,6 +31,9 @@
         <activity android:name=".ResultActivity"
             android:screenOrientation="landscape"/>
 
+        <activity android:name=".CheckKeyActivity"
+            android:screenOrientation="landscape"/>
+
         <activity
             android:name=".bluetooth.DeviceListActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.MinWidth"

@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button btn_end;
     ImageView btn_connect;
     TextView tv_setting;
+    TextView tv_checkkey;
 
     Map<Integer,String> msgMap = new LinkedHashMap<>();
     private static final int REQUEST_CONNECT_DEVICE = 1;
@@ -67,11 +68,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btn_start = (Button) findViewById(R.id.btn_startgame);
         btn_connect = (ImageView) findViewById(R.id.btn_connect);
         tv_setting = (TextView) findViewById(R.id.tv_setting);
+        tv_checkkey = (TextView) findViewById(R.id.tv_checkkey);
 
         btn_start.setOnClickListener(this);
         btn_end.setOnClickListener(this);
         btn_connect.setOnClickListener(this);
         tv_setting.setOnClickListener(this);
+        tv_checkkey.setOnClickListener(this);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -134,6 +137,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
         }else if(v.getId()==R.id.tv_setting){
             showPhotoDialog();
+        }else if(v.getId()==R.id.tv_checkkey){
+            Intent serverIntent = new Intent(LoginActivity.this, CheckKeyActivity.class);
+            startActivity(serverIntent);
         }
     }
 
