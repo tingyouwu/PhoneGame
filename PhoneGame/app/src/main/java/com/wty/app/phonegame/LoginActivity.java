@@ -281,7 +281,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.d("wutingyou","收到按键事件："+readMessage);
-                    EventBus.getDefault().post(new RefreshEvent(readMessage));
+                    if(readMessage != null){
+
+                        if(readMessage.startsWith("1"))
+                            readMessage = "1";
+                        if(readMessage.startsWith("2"))
+                            readMessage = "2";
+                        EventBus.getDefault().post(new RefreshEvent(readMessage));
+                    }
+
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
