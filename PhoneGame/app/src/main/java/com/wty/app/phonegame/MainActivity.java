@@ -21,7 +21,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity{
 
     TextView tv_mobile,tv_notice,tv_time;
     TextView tv_start;
@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout ll_refuse,ll_accept;
     String currentmobile;
     boolean isNeedtoRefuse;
-    boolean isClickRefuse;
-    boolean isClickAccept;
     List<Boolean> result = new ArrayList<>();
     int MobileSelection = 0;//记录当前是第几个电话号码
 
@@ -42,18 +40,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN , WindowManager.LayoutParams. FLAG_FULLSCREEN);
         ll_refuse = (LinearLayout) findViewById(R.id.ll_refuse);
         ll_accept = (LinearLayout) findViewById(R.id.ll_accept);
-        ll_refuse.setOnClickListener(this);
-        ll_accept.setOnClickListener(this);
         tv_mobile = (TextView) findViewById(R.id.tv_mobile_num);
         tv_notice = (TextView) findViewById(R.id.tv_notice);
         tv_time = (TextView) findViewById(R.id.tv_time);
         tv_start = (TextView) findViewById(R.id.start_time);
         tv_check = (TextView) findViewById(R.id.tv_check);
         contentLayout = (RelativeLayout) findViewById(R.id.rl_content);
-        isClickRefuse = false;
-        isClickAccept = false;
         EventBus.getDefault().register(this);
-
         countDowntimerForStart.start();
     }
 
@@ -123,8 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             MobileSelection ++;
-            isClickAccept = false;
-            isClickRefuse = false;
             currentmobile = PhoneNum.getInstance().getRandomMoblie();
             isNeedtoRefuse = PhoneNum.getInstance().isNeedtoRefuse(currentmobile);
             tv_mobile.setText(currentmobile);
@@ -164,11 +155,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
@@ -177,18 +163,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(countDowntimerForShow != null)
             countDowntimerForShow.cancel();
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v.getId()==R.id.ll_accept){
-            if(MobileSelection > result.size()){
-                result.add(!isNeedtoRefuse?true:false);
-            }
-        }else if (v.getId()==R.id.ll_refuse){
-            if(MobileSelection > result.size()){
-                result.add(isNeedtoRefuse?true:false);
-            }
-        }
     }
 }

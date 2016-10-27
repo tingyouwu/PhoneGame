@@ -158,16 +158,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             //切换难易程度
             int level = PreferenceUtil.getInstance().getLevel();
             if(level==1){
+                //从容易-》中级
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,11000);
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,1000);
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,2);
                 tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
             }else if(level==2){
+                //从中级-》困难
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,10500);
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,500);
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,3);
                 tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
             }else{
+                //从困难-》容易
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,1);
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,12000);
                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,2000);
@@ -231,16 +234,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 dialog.dismiss();
                                 break;
                             case 1://
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,2);
                                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,11000);
                                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,1000);
-                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,2);
                                 tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
                                 dialog.dismiss();
                                 break;
                             case 2:
+                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,3);
                                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.MAX,10500);
                                 PreferenceUtil.getInstance().writePreferences(PreferenceUtil.EACH,500);
-                                PreferenceUtil.getInstance().writePreferences(PreferenceUtil.LEVEL,3);
                                 tv_setting.setText(msgMap.get(PreferenceUtil.getInstance().getLevel()));
                                 dialog.dismiss();
                                 break;
@@ -282,7 +285,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.d("wutingyou","收到按键事件："+readMessage);
                     if(readMessage != null){
-
                         if(readMessage.startsWith("1"))
                             readMessage = "1";
                         if(readMessage.startsWith("2"))
